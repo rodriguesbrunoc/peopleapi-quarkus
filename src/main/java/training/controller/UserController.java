@@ -1,11 +1,12 @@
 package training.controller;
 
 import domain.Users;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import service.UserService;
+
+import java.util.UUID;
 
 @Path("/users")
 public class UserController {
@@ -16,8 +17,40 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GET
+    @Path("/list")
+    public Response findAllUsers(@QueryParam("page") @DefaultValue("0") Integer page, @QueryParam("pageSize") @DefaultValue("10") Integer pageSize) {
+        var users = userService.findAllUsers(page, pageSize);
+        return Response.ok(users).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response findUserById(@PathParam("id") UUID userId) {
+        return Response.ok(userService.findUserById(userId)).build();
+    }
+
+    @PUT
+    @Path("/update/{id}")
+    @Transactional
+    public Response updateUser(@PathParam("id") UUID userId, Users user) {
+        return Response.ok(userService.updateUser(userId, user)).build();
+    }
+
+
     @POST
+    @Path("/create")
+    @Transactional
     public Response createUsers(Users users) {
-            return Response.ok(userService.createUsers(users)).build();
+        return Response.ok(userService.createUsers(users)).build();
     }
 }
+
+    @DELETE
+    @Path("/delete/{id}")
+    @Transactional
+    public Response deleteUsers(@PathParam("id") UUID userId) {
+        return Response.ok().build();
+}
+
+
