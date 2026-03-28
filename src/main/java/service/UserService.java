@@ -35,6 +35,11 @@ public class UserService {
         return user;
     }
 
+    public void deleteUser(UUID userId) {
+        var user = findUserById(userId);
+        Users.deleteById(user.id);
+    }
+
 
 
 }
